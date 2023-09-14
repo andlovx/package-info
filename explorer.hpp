@@ -11,7 +11,7 @@ class DirectoryExplorer
 public:
     using file_list = std::vector<std::string>;
 
-    enum Filter
+    enum Filter // Inclusive filter
     {
         HIDDEN = 0x1,
         FILES = 0x2,
@@ -21,15 +21,19 @@ public:
         CHARACTER = 0x20,
         FIFO = 0x40,
         SOCKET = 0x80,
+        DOTDIR = 0x100,
 
-        DEFAULT = FILES | DIRS | LINKS,
         ALL = HIDDEN | FILES | DIRS | LINKS |
-              BLOCK | CHARACTER | FIFO | SOCKET
+              BLOCK | CHARACTER | FIFO | SOCKET |
+              DOTDIR,
+
+        DEFAULT = ALL
     };
 
     DirectoryExplorer();
     DirectoryExplorer(std::string path);
     DirectoryExplorer(Filter filter);
+    DirectoryExplorer(int filter);
 
     void set_path(std::string path);
 

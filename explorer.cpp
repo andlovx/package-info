@@ -20,6 +20,12 @@ DirectoryExplorer::DirectoryExplorer(Filter filter)
 {
 }
 
+DirectoryExplorer::DirectoryExplorer(int filter)
+    : _path(fs::current_path()),
+      _filter(filter)
+{
+}
+
 void DirectoryExplorer::set_path(std::string path)
 {
     _path = path;
@@ -44,6 +50,7 @@ void DirectoryExplorer::set_files(file_list &list, std::regex match) const
 void DirectoryExplorer::set_files(file_list &list, std::function<bool(std::string)> match) const
 {
     fs::recursive_directory_iterator rdi(fs::canonical(_path));
+    std::string dotdir(fs::path::preferred_separator + std::string("."));
 
     for (auto file : rdi)
     {
@@ -80,6 +87,10 @@ void DirectoryExplorer::set_files(file_list &list, std::function<bool(std::strin
             continue;
         }
         if (file.path().generic_string()[0] == '.' && !has_filter(HIDDEN))
+        {
+            continue;
+        }
+        if (file.path().generic_string().find(dotdir) != std::string::npos && !has_filter(DOTDIR))
         {
             continue;
         }
