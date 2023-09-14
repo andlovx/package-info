@@ -1,14 +1,29 @@
 CC = g++
-CPPFLAGS = -O -Wall -g
+CPPFLAGS = -O -Wall -g -std=c++17
 
-PROGRAMS += package-object package-list
 CPPFLAGS += -I..
+PROGRAMS += \
+	package-object \
+	package-list \
+	explore-filter \
+	explore-all \
+	explore-name \
+	explore-regex \
+	explore-func \
+	explore-files
 
 .PHONY : all clean all-clean distclean 
 
 all : $(PROGRAMS)
-package-object : package-object.o ../package.cpp
-package-list : package-list.o ../package.cpp
+
+package-object : package-object.o ../package.o
+package-list : package-list.o ../package.o
+explore-filter : explore-filter.o ../explorer.o
+explore-all : explore-all.o ../explorer.o
+explore-name : explore-name.o ../explorer.o
+explore-regex : explore-regex.o ../explorer.o
+explore-func : explore-func.o ../explorer.o
+explore-files : explore-files.o ../explorer.o
 
 clean :
 	rm -f *.o

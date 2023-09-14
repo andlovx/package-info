@@ -9,7 +9,7 @@ static void dump(int id, const PackageList &list)
     }
 }
 
-int main(int argc, char **argv)
+int main()
 {
     Package p1("hello1"), p2("hello2");
 

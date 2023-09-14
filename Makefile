@@ -1,5 +1,5 @@
 CC = g++
-CPPFLAGS = -O2 -Wall
+CPPFLAGS = -O2 -Wall -std=c++17
 WITH_TEST = 1
 
 PROGRAMS = package-info
@@ -12,7 +12,7 @@ endif
 .PHONY : all clean all-clean distclean $(SUBDIRS)
 
 all : $(PROGRAMS) $(SUBDIRS)
-package-info : main.o package.o
+package-info : main.o package.o explorer.o
 	$(CC) -o $@ $+
 
 $(SUBDIRS):

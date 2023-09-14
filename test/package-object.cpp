@@ -1,7 +1,7 @@
 #include <iostream>
 #include "package.hpp"
 
-int main(int argc, char **argv)
+int main()
 {
     Package p1, p2("hello2");
     std::string p3(p2);
