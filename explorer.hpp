@@ -5,11 +5,13 @@
 #include <vector>
 #include <functional>
 #include <regex>
+#include <filesystem>
 
 class DirectoryExplorer
 {
 public:
     using file_list = std::vector<std::string>;
+    using file_entry = std::filesystem::directory_entry;
 
     enum Filter // Inclusive filter
     {
@@ -40,12 +42,16 @@ public:
     void set_files(file_list &list) const;
     void set_files(file_list &list, std::string name) const;
     void set_files(file_list &list, std::regex match) const;
-    void set_files(file_list &list, std::function<bool(std::string)> match) const;
+    void set_files(file_list &list, std::function<bool(const file_entry &file)> match) const;
+    void set_files(file_list &list, std::function<bool(std::string name)> match,
+                   const std::vector<std::string> &exclude = std::vector<std::string>()) const;
 
     file_list get_files() const;
     file_list get_files(std::string name) const;
     file_list get_files(std::regex match) const;
-    file_list get_files(std::function<bool(std::string)> match) const;
+    file_list get_files(std::function<bool(const file_entry &file)> match) const;
+    file_list get_files(std::function<bool(std::string name)> match,
+                        const std::vector<std::string> &exclude = std::vector<std::string>()) const;
 
     int get_filter() const;
     void set_filter(int filter);
@@ -57,6 +63,8 @@ public:
     bool has_filter(Filter filter) const;
 
 private:
+    bool is_filtered(const file_entry &) const;
+
     std::string _path;
     int _filter = DEFAULT;
 };

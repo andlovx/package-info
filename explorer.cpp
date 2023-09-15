@@ -47,55 +47,54 @@ void DirectoryExplorer::set_files(file_list &list, std::regex match) const
               { return std::regex_match(filename, match); });
 }
 
-void DirectoryExplorer::set_files(file_list &list, std::function<bool(std::string)> match) const
+void DirectoryExplorer::set_files(file_list &list, std::function<bool(const file_entry &file)> match) const
 {
     fs::recursive_directory_iterator rdi(fs::canonical(_path));
-    std::string dotdir(fs::path::preferred_separator + std::string("."));
 
     for (auto file : rdi)
     {
-        if (!match(file.path().filename()))
+        if (is_filtered(file))
         {
             continue;
         }
-        if (file.is_block_file() && !has_filter(BLOCK))
+        if (match(file))
         {
-            continue;
+            list.push_back(file.path());
         }
-        if (file.is_character_file() && !has_filter(CHARACTER))
+    }
+}
+
+void DirectoryExplorer::set_files(file_list &list, std::function<bool(std::string)> match, const std::vector<std::string> &exclude) const
+{
+    fs::recursive_directory_iterator rdi(fs::canonical(_path));
+
+    auto is_excluded = [&exclude](const std::string &path) -> bool
+    {
+        for (auto subdir : exclude)
         {
-            continue;
-        }
-        if (file.is_directory() && !has_filter(DIRS))
-        {
-            continue;
-        }
-        if (file.is_fifo() && !has_filter(FIFO))
-        {
-            continue;
-        }
-        if (file.is_socket() && !has_filter(SOCKET))
-        {
-            continue;
-        }
-        if (file.is_symlink() && !has_filter(LINKS))
-        {
-            continue;
-        }
-        if (file.is_regular_file() && !has_filter(FILES))
-        {
-            continue;
-        }
-        if (file.path().generic_string()[0] == '.' && !has_filter(HIDDEN))
-        {
-            continue;
-        }
-        if (file.path().generic_string().find(dotdir) != std::string::npos && !has_filter(DOTDIR))
-        {
-            continue;
+            if (path.find(subdir) != std::string::npos)
+            {
+                return true;
+            }
         }
 
-        list.push_back(file.path());
+        return false;
+    };
+
+    for (auto file : rdi)
+    {
+        if (is_filtered(file))
+        {
+            continue;
+        }
+        if (is_excluded(file.path()))
+        {
+            continue;
+        }
+        if (match(file.path().filename()))
+        {
+            list.push_back(file.path());
+        }
     }
 }
 
@@ -113,10 +112,24 @@ file_list DirectoryExplorer::get_files(std::string name) const
     return list;
 }
 
-file_list DirectoryExplorer::get_files(std::function<bool(std::string)> match) const
+file_list DirectoryExplorer::get_files(std::regex match) const
 {
     file_list list;
     set_files(list, match);
+    return list;
+}
+
+file_list DirectoryExplorer::get_files(std::function<bool(const file_entry &file)> match) const
+{
+    file_list list;
+    set_files(list, match);
+    return list;
+}
+
+file_list DirectoryExplorer::get_files(std::function<bool(std::string)> match, const std::vector<std::string> &exclude) const
+{
+    file_list list;
+    set_files(list, match, exclude);
     return list;
 }
 
@@ -160,9 +173,46 @@ bool DirectoryExplorer::has_filter(Filter filter) const
     return (_filter & filter) != 0;
 }
 
-file_list DirectoryExplorer::get_files(std::regex match) const
+bool DirectoryExplorer::is_filtered(const file_entry &file) const
 {
-    file_list list;
-    set_files(list, match);
-    return list;
+    static std::string dotdir(fs::path::preferred_separator + std::string("."));
+
+    if (file.is_block_file() && !has_filter(BLOCK))
+    {
+        return true;
+    }
+    if (file.is_character_file() && !has_filter(CHARACTER))
+    {
+        return true;
+    }
+    if (file.is_directory() && !has_filter(DIRS))
+    {
+        return true;
+    }
+    if (file.is_fifo() && !has_filter(FIFO))
+    {
+        return true;
+    }
+    if (file.is_socket() && !has_filter(SOCKET))
+    {
+        return true;
+    }
+    if (file.is_symlink() && !has_filter(LINKS))
+    {
+        return true;
+    }
+    if (file.is_regular_file() && !has_filter(FILES))
+    {
+        return true;
+    }
+    if (file.path().generic_string()[0] == '.' && !has_filter(HIDDEN))
+    {
+        return true;
+    }
+    if (file.path().generic_string().find(dotdir) != std::string::npos && !has_filter(DOTDIR))
+    {
+        return true;
+    }
+
+    return false;
 }
