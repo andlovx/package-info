@@ -62,9 +62,13 @@ public:
     void remove_filter(Filter filter);
     bool has_filter(Filter filter) const;
 
+    void use_fullname(bool enable);
+    bool use_fullname() const;
+
 private:
     bool is_filtered(const file_entry &) const;
 
+    bool _fullname = false;
     std::string _path;
     int _filter = DEFAULT;
 };

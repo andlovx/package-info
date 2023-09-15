@@ -91,7 +91,11 @@ void DirectoryExplorer::set_files(file_list &list, std::function<bool(std::strin
         {
             continue;
         }
-        if (match(file.path().filename()))
+        if (use_fullname() && match(file.path()))
+        {
+            list.push_back(file.path());
+        }
+        if (!use_fullname() && match(file.path().filename()))
         {
             list.push_back(file.path());
         }
@@ -171,6 +175,16 @@ void DirectoryExplorer::remove_filter(Filter filter)
 bool DirectoryExplorer::has_filter(Filter filter) const
 {
     return (_filter & filter) != 0;
+}
+
+void DirectoryExplorer::use_fullname(bool enable)
+{
+    _fullname = enable;
+}
+
+bool DirectoryExplorer::use_fullname() const
+{
+    return _fullname;
 }
 
 bool DirectoryExplorer::is_filtered(const file_entry &file) const
