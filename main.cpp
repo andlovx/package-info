@@ -1,14 +1,21 @@
 #include <iostream>
+
 #include "package.hpp"
+#include "program.hpp"
 
 int main(int argc, char **argv)
 {
-    Package p1, p2("hello");
-    std::string p3(p2);
+    Program program(argv[0]);
 
-    std::cout << "p1: " << p1 << std::endl;
-    std::cout << "p2: " << p2 << std::endl;
-    std::cout << "p3: " << p3 << std::endl;
+    try
+    {
+        program.parse(argc, argv);
+        program.run();
+    }
+    catch (const std::exception &exception)
+    {
+        std::cerr << program.name() << ": error: " << exception.what() << std::endl;
+    }
 
     return 0;
 }

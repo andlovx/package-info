@@ -12,7 +12,7 @@ endif
 .PHONY : all clean all-clean distclean $(SUBDIRS)
 
 all : $(PROGRAMS) $(SUBDIRS)
-package-info : main.o package.o explorer.o
+package-info : main.o package.o explorer.o program.o
 	$(CC) -o $@ $+
 
 $(SUBDIRS):
