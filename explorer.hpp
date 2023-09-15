@@ -43,15 +43,13 @@ public:
     void set_files(file_list &list, std::string name) const;
     void set_files(file_list &list, std::regex match) const;
     void set_files(file_list &list, std::function<bool(const file_entry &file)> match) const;
-    void set_files(file_list &list, std::function<bool(std::string name)> match,
-                   const std::vector<std::string> &exclude = std::vector<std::string>()) const;
+    void set_files(file_list &list, std::function<bool(std::string name)> match) const;
 
     file_list get_files() const;
     file_list get_files(std::string name) const;
     file_list get_files(std::regex match) const;
     file_list get_files(std::function<bool(const file_entry &file)> match) const;
-    file_list get_files(std::function<bool(std::string name)> match,
-                        const std::vector<std::string> &exclude = std::vector<std::string>()) const;
+    file_list get_files(std::function<bool(std::string name)> match) const;
 
     int get_filter() const;
     void set_filter(int filter);
@@ -62,14 +60,16 @@ public:
     void remove_filter(Filter filter);
     bool has_filter(Filter filter) const;
 
-    void use_fullname(bool enable);
-    bool use_fullname() const;
+    void set_exclude(const std::vector<std::string> &exclude);
+    void add_exclude(const std::string &name);
+    const std::vector<std::string> &get_exclude() const;
 
 private:
     bool is_filtered(const file_entry &) const;
+    bool is_excluded(const std::string &) const;
 
-    bool _fullname = false;
     std::string _path;
+    std::vector<std::string> _exclude;
     int _filter = DEFAULT;
 };
 

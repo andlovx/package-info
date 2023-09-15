@@ -57,6 +57,10 @@ void DirectoryExplorer::set_files(file_list &list, std::function<bool(const file
         {
             continue;
         }
+        if (is_excluded(file.path()))
+        {
+            continue;
+        }
         if (match(file))
         {
             list.push_back(file.path());
@@ -64,22 +68,9 @@ void DirectoryExplorer::set_files(file_list &list, std::function<bool(const file
     }
 }
 
-void DirectoryExplorer::set_files(file_list &list, std::function<bool(std::string)> match, const std::vector<std::string> &exclude) const
+void DirectoryExplorer::set_files(file_list &list, std::function<bool(std::string)> match) const
 {
     fs::recursive_directory_iterator rdi(fs::canonical(_path));
-
-    auto is_excluded = [&exclude](const std::string &path) -> bool
-    {
-        for (auto subdir : exclude)
-        {
-            if (path.find(subdir) != std::string::npos)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    };
 
     for (auto file : rdi)
     {
@@ -91,11 +82,7 @@ void DirectoryExplorer::set_files(file_list &list, std::function<bool(std::strin
         {
             continue;
         }
-        if (use_fullname() && match(file.path()))
-        {
-            list.push_back(file.path());
-        }
-        if (!use_fullname() && match(file.path().filename()))
+        if (match(file.path().filename()))
         {
             list.push_back(file.path());
         }
@@ -130,10 +117,10 @@ file_list DirectoryExplorer::get_files(std::function<bool(const file_entry &file
     return list;
 }
 
-file_list DirectoryExplorer::get_files(std::function<bool(std::string)> match, const std::vector<std::string> &exclude) const
+file_list DirectoryExplorer::get_files(std::function<bool(std::string)> match) const
 {
     file_list list;
-    set_files(list, match, exclude);
+    set_files(list, match);
     return list;
 }
 
@@ -177,14 +164,19 @@ bool DirectoryExplorer::has_filter(Filter filter) const
     return (_filter & filter) != 0;
 }
 
-void DirectoryExplorer::use_fullname(bool enable)
+void DirectoryExplorer::set_exclude(const std::vector<std::string> &exclude)
 {
-    _fullname = enable;
+    _exclude = exclude;
 }
 
-bool DirectoryExplorer::use_fullname() const
+void DirectoryExplorer::add_exclude(const std::string &name)
 {
-    return _fullname;
+    _exclude.push_back(name);
+}
+
+const std::vector<std::string> &DirectoryExplorer::get_exclude() const
+{
+    return _exclude;
 }
 
 bool DirectoryExplorer::is_filtered(const file_entry &file) const
@@ -226,6 +218,19 @@ bool DirectoryExplorer::is_filtered(const file_entry &file) const
     if (file.path().generic_string().find(dotdir) != std::string::npos && !has_filter(DOTDIR))
     {
         return true;
+    }
+
+    return false;
+}
+
+bool DirectoryExplorer::is_excluded(const std::string &path) const
+{
+    for (auto subdir : this->_exclude)
+    {
+        if (path.find(subdir) != std::string::npos)
+        {
+            return true;
+        }
     }
 
     return false;

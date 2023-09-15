@@ -4,5 +4,6 @@ explore-filter
 explore-func
 explore-name
 explore-regex
+explore-exclude
 package-list
 package-object

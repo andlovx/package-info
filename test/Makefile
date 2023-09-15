@@ -10,7 +10,9 @@ PROGRAMS += \
 	explore-name \
 	explore-regex \
 	explore-func \
-	explore-files
+	explore-files \
+	explore-exclude \
+	collector 
 
 .PHONY : all clean all-clean distclean 
 
@@ -24,6 +26,8 @@ explore-name : explore-name.o ../explorer.o
 explore-regex : explore-regex.o ../explorer.o
 explore-func : explore-func.o ../explorer.o
 explore-files : explore-files.o ../explorer.o
+explore-exclude : explore-exclude.o ../explorer.o
+collector : collector.o ../collector.o ../explorer.o
 
 clean :
 	rm -f *.o
