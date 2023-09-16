@@ -1,7 +1,6 @@
 CC = g++
-CPPFLAGS = -O -Wall -g -std=c++17
-
-CPPFLAGS += -I..
+CPPFLAGS = -O -Wall -g -std=c++17 $(INCLUDES)
+INCLUDES = -I..
 PROGRAMS += \
 	package-object \
 	package-list \
@@ -12,7 +11,8 @@ PROGRAMS += \
 	explore-func \
 	explore-files \
 	explore-exclude \
-	collector 
+	package-json1 \
+	package-json2
 
 .PHONY : all clean all-clean distclean 
 
@@ -27,7 +27,8 @@ explore-regex : explore-regex.o ../explorer.o
 explore-func : explore-func.o ../explorer.o
 explore-files : explore-files.o ../explorer.o
 explore-exclude : explore-exclude.o ../explorer.o
-collector : collector.o ../collector.o ../explorer.o
+package-json1 : package-json1.o 
+package-json2 : package-json2.o 
 
 clean :
 	rm -f *.o
