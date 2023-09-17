@@ -1,5 +1,5 @@
-#ifdef HAVE_STRUCT_MAPPING_H
 #include <iostream>
+#ifdef HAVE_STRUCT_MAPPING_H
 #include <fstream>
 #include <sstream>
 #include "struct_mapping.h"
@@ -44,7 +44,7 @@ static void readfile(const char *file, std::string &result)
 
 static std::ostream &operator<<(std::ostream &out, const Package &package)
 {
-    return out << "Package: {\n"
+    return out << "{\n"
                << "  name: " << package.name << "\n"
                << "  version: " << package.version << "\n"
                << "  license: " << package.license << "\n"
@@ -53,7 +53,7 @@ static std::ostream &operator<<(std::ostream &out, const Package &package)
 
 int main(int argc, char **argv)
 {
-    std::string json = R"(
+    std::string doc = R"(
 {
     "name": "package-name",
     "version": "1.2.3",
@@ -64,24 +64,25 @@ int main(int argc, char **argv)
 
     if (argc > 1)
     {
-        readfile(argv[1], json);
+        readfile(argv[1], doc);
     }
 
     json::reg(&Package::name, "name");
     json::reg(&Package::version, "version");
     json::reg(&Package::license, "license");
 
-    std::istringstream data(json);
+    std::istringstream data(doc);
     json::map_json_to_struct(package, data);
 
-    std::cout << "JSON: " << json << std::endl;
-    std::cout << package << std::endl;
+    std::cout << "DOC: " << doc << std::endl;
+    std::cout << "PACKAGE: " << package << std::endl;
 
     return 0;
 }
 #else
 int main()
 {
+    std::cout << "Install the struct_mapping library for running this test.\n";
     return 0;
 }
 #endif // HAVE_STRUCT_MAPPING_H

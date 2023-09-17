@@ -32,7 +32,7 @@ static void readfile(const char *file, std::string &result)
 
 static std::ostream &operator<<(std::ostream &out, const Package &package)
 {
-    return out << "Package: {\n"
+    return out << "{\n"
                << "  name: " << package.name << "\n"
                << "  version: " << package.version << "\n"
                << "  license: " << package.license << "\n"
@@ -61,8 +61,9 @@ int main(int argc, char **argv)
     package.version = data["version"];
     package.license = data["license"];
 
-    std::cout << "JSON: " << doc << std::endl;
-    std::cout << package << std::endl;
+    std::cout << "DOC: " << doc << std::endl;
+    std::cout << "PACKAGE: " << package << std::endl;
+    std::cout << "JSON: " << data << std::endl;
 
     return 0;
 }
