@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 enum LicenseType
 {
@@ -37,6 +38,8 @@ public:
     void hash(std::string str);
     void hash(HashType type);
     void modified(std::string datetime);
+    void primary(bool primary);
+    void parent(std::string package);
 
     const std::string &name() const;
     const std::string &version() const;
@@ -46,6 +49,8 @@ public:
     const std::string &hash() const;
     const HashType hash_type() const;
     const std::string &modified() const;
+    const bool primary() const;
+    const std::string &parent() const;
 
     operator std::string() const;
 
@@ -58,6 +63,8 @@ private:
     std::string _hash;
     HashType _hash_type;
     std::string _modified;
+    std::string _parent;
+    bool _primary;
 };
 
 std::ostream &operator<<(std::ostream &, const Package &);
@@ -106,5 +113,26 @@ inline PackageList::const_iterator PackageList::end() const
 {
     return _packages.end();
 }
+
+class PackagePath : public std::vector<std::string>
+{
+public:
+    PackagePath();
+    PackagePath(std::string path);
+
+    void update(std::string path);
+    int count(const std::string &find) const;
+    bool is_primary() const;
+    std::string parent() const;
+};
+
+class PackageExplorer
+{
+public:
+    Package discover(const std::string &path) const;
+
+private:
+    void readfile(const char *file, std::string &result) const;
+};
 
 #endif // PACKAGE_HPP

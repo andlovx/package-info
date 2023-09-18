@@ -12,7 +12,9 @@ PROGRAMS += \
 	explore-files \
 	explore-exclude \
 	package-json1 \
-	package-json2
+	package-json2 \
+	package-path \
+	collector 
 
 .PHONY : all clean all-clean distclean 
 
@@ -29,6 +31,8 @@ explore-files : explore-files.o ../explorer.o
 explore-exclude : explore-exclude.o ../explorer.o
 package-json1 : package-json1.o 
 package-json2 : package-json2.o 
+package-path : package-path.o ../package.o 
+collector : collector.o ../collector.o ../explorer.o ../package.o
 
 clean :
 	rm -f *.o

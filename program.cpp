@@ -1,6 +1,7 @@
 #include <iostream>
 #include <libgen.h>
 #include "program.hpp"
+#include "collector.hpp"
 
 Options::Options()
 {
@@ -169,6 +170,15 @@ void Program::parse(int argc, char **argv)
 
 void Program::run()
 {
+    Collector collector;
+
+    collector.set_debug(_options.runtime.debug);
+    collector.process(_options.generic.root);
+
+    for (auto entry : collector.get_packages())
+    {
+        std::cout << entry.first << ": " << entry.second << std::endl;
+    }
 }
 
 std::string Program::name() const

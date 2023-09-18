@@ -9,3 +9,5 @@ package-list
 package-object
 package-json1
 package-json2
+package-path
+collector

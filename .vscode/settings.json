@@ -53,6 +53,11 @@
     "iomanip": "cpp",
     "bitset": "cpp",
     "cstring": "cpp",
-    "regex": "cpp"
+    "regex": "cpp",
+    "forward_list": "cpp",
+    "optional": "cpp",
+    "fstream": "cpp",
+    "cinttypes": "cpp",
+    "valarray": "cpp"
   }
 }
