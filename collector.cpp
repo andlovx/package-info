@@ -47,6 +47,7 @@ void Collector::process(std::string root)
             {
                 package.hash(lockfile.integrity(package.name()));
                 package.hash(lockfile.hash_type(package.name()));
+                package.download(lockfile.resolved(package.name()));
             }
 
             _packages.add(package);

@@ -18,49 +18,54 @@ Package::Package(std::string name)
 {
 }
 
-Package::Package(std::string name, std::string version, std::string url, std::string hash)
-    : _name(name), _version(version), _url(url), _hash(hash), _license_type(LicenseType::OTHER)
+Package::Package(std::string name, std::string version, std::string download, std::string hash)
+    : _name(name), _version(version), _download(download), _hash(hash), _license_type(LicenseType::OTHER)
 {
 }
 
 void Package::name(std::string name)
 {
-    this->_name = name;
+    _name = name;
 }
 
 void Package::version(std::string version)
 {
-    this->_version = version;
+    _version = version;
 }
 
 void Package::license(std::string license)
 {
-    this->_license = license;
+    _license = license;
 }
 
 void Package::license(LicenseType type)
 {
-    this->_license_type = type;
+    _license_type = type;
 }
 
-void Package::url(std::string url)
+void Package::project(std::string url)
 {
-    this->_url = url;
+    _project = url;
+}
+
+void Package::download(std::string url)
+{
+    _download = url;
 }
 
 void Package::hash(std::string str)
 {
-    this->_hash = str;
+    _hash = str;
 }
 
 void Package::hash(HashType type)
 {
-    this->_hash_type = type;
+    _hash_type = type;
 }
 
 void Package::modified(std::string datetime)
 {
-    this->_modified = datetime;
+    _modified = datetime;
 }
 
 void Package::parent(std::string package)
@@ -93,14 +98,19 @@ LicenseType Package::license_type() const
     return _license_type;
 }
 
-const std::string &Package::url() const
+const std::string &Package::project() const
 {
-    return this->_url;
+    return _project;
+}
+
+const std::string &Package::download() const
+{
+    return _download;
 }
 
 const std::string &Package::hash() const
 {
-    return this->_hash;
+    return _hash;
 }
 
 const HashType Package::hash_type() const
@@ -110,7 +120,7 @@ const HashType Package::hash_type() const
 
 const std::string &Package::modified() const
 {
-    return this->_modified;
+    return _modified;
 }
 
 const bool Package::primary() const
@@ -131,7 +141,9 @@ Package::operator std::string() const
        << "name: \"" << _name << "\", "
        << "version: \"" << _version << "\", "
        << "license: \"" << _license << "\", "
-       << "url: \"" << _url << "\" "
+       << "project: \"" << _project << "\" "
+       << "download: \"" << _download << "\" "
+       << "hash: \"" << _hash << "\" "
        << "}";
 
     return ss.str();
@@ -143,7 +155,8 @@ std::ostream &operator<<(std::ostream &out, const Package &p)
                << "name: \"" << p.name() << "\", "
                << "version: \"" << p.version() << "\", "
                << "license: \"" << p.license() << "\", "
-               << "url: \"" << p.url() << "\" "
+               << "project: \"" << p.project() << "\" "
+               << "download: \"" << p.download() << "\" "
                << "hash: \"" << p.hash() << "\" "
                << "}";
 }
@@ -300,11 +313,11 @@ Package PackageExplorer::discover(const std::string &path) const
 
     if (data.contains("homepage") && data["homepage"].is_string())
     {
-        package.url(data["homepage"]);
+        package.project(data["homepage"]);
     }
     if (data.contains("repository") && data["repository"].is_string())
     {
-        package.url(data["repository"]);
+        package.project(data["repository"]);
     }
 
     return package;
@@ -389,7 +402,7 @@ void PackageLock::add_package(std::string name, std::string version, std::string
 
 std::string PackageLock::resolved(std::string name) const
 {
-    return _list.find(name).url();
+    return _list.find(name).project();
 }
 
 std::string PackageLock::integrity(std::string name) const

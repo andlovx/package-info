@@ -31,13 +31,14 @@ class Package
 public:
     Package();
     Package(std::string name);
-    Package(std::string name, std::string version, std::string url = "", std::string hash = "");
+    Package(std::string name, std::string version, std::string download = "", std::string hash = "");
 
     void name(std::string name);
     void version(std::string version);
     void license(std::string license);
     void license(LicenseType type);
-    void url(std::string url);
+    void project(std::string url);
+    void download(std::string url);
     void hash(std::string str);
     void hash(HashType type);
     void modified(std::string datetime);
@@ -48,7 +49,8 @@ public:
     const std::string &version() const;
     const std::string &license() const;
     LicenseType license_type() const;
-    const std::string &url() const;
+    const std::string &project() const;
+    const std::string &download() const;
     const std::string &hash() const;
     const HashType hash_type() const;
     const std::string &modified() const;
@@ -60,7 +62,8 @@ public:
 private:
     std::string _name;
     std::string _version;
-    std::string _url;
+    std::string _project;
+    std::string _download;
     std::string _hash;
     std::string _license;
     LicenseType _license_type;

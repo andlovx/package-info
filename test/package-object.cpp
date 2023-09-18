@@ -14,7 +14,9 @@ int main()
     p1.license(LicenseType::APACHE);
     p1.license("Apache License Version 2");
     p1.version("1.2.3");
-    p1.url("https://registry.npmjs.org/hello1/-/hello1.1.2.3.tgz");
+    p1.download("https://registry.npmjs.org/hello1/-/hello1.1.2.3.tgz");
+    p1.project("https://hello1.mydomanin.org");
+    p1.hash("sha512-Yqfm+XDx0+Prh3VSeEQCPU81yC+JWZ2pDPFSS4ZdpfZhp4MkFMaDC1UqseovEKwSUpnIL7+vK+Clp7bfh0iD7g==");
 
     std::cout << "p1: " << p1 << std::endl;
 

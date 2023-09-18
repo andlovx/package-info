@@ -14,7 +14,7 @@ Options::Options()
     output.name = true;
     output.version = true;
     output.modified = false;
-    output.url = false;
+    output.project = false;
 
     runtime.debug = false;
     runtime.verbose = false;
@@ -115,9 +115,9 @@ void Program::parse(int argc, char **argv)
         {
             _options.output.modified = true;
         }
-        else if (option.key == "--url")
+        else if (option.key == "--project")
         {
-            _options.output.url = true;
+            _options.output.project = true;
         }
         //
         // Option aliases:
@@ -228,7 +228,7 @@ void Program::usage()
         << "  --name:         Include package name in output.\n"
         << "  --version:      Include package version in output.\n"
         << "  --modified:     Include modified date in output.\n"
-        << "  --url:          Include distribution URL in output.\n"
+        << "  --project:          Include distribution URL in output.\n"
         << "\n"
         << "Aliases:\n"
         << "  --json:         Alias for format=json\n"
@@ -254,7 +254,7 @@ std::ostream &operator<<(std::ostream &out, const Options &options)
            << "      Name: " << options.output.name << "\n"
            << "   Version: " << options.output.version << "\n"
            << "  Modified: " << options.output.modified << "\n"
-           << "       URL: " << options.output.url << "\n"
+           << "       URL: " << options.output.project << "\n"
            << "Runtime:\n"
            << "     Debug: " << options.runtime.debug << "\n"
            << "   Verbose: " << options.runtime.verbose << "\n";

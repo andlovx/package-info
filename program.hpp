@@ -28,7 +28,7 @@ struct Options
         bool name;
         bool version;
         bool modified;
-        bool url;
+        bool project;
     } output;
 
     struct Runtime
