@@ -21,7 +21,8 @@ enum HashType
     SHA224,
     SHA256,
     SHA384,
-    SHA512
+    SHA512,
+    UNSPEC
 };
 
 class Package
@@ -29,6 +30,7 @@ class Package
 public:
     Package();
     Package(std::string name);
+    Package(std::string name, std::string version, std::string url = "", std::string hash = "");
 
     void name(std::string name);
     void version(std::string version);
@@ -57,10 +59,10 @@ public:
 private:
     std::string _name;
     std::string _version;
-    std::string _license;
-    LicenseType _license_type;
     std::string _url;
     std::string _hash;
+    std::string _license;
+    LicenseType _license_type;
     HashType _hash_type;
     std::string _modified;
     std::string _parent;
@@ -123,7 +125,12 @@ public:
     void update(std::string path);
     int count(const std::string &find) const;
     bool is_primary() const;
+
+    std::string name() const;
     std::string parent() const;
+
+    std::string join(char separator) const;
+    std::string join(std::string separator) const;
 };
 
 class PackageExplorer
@@ -133,6 +140,25 @@ public:
 
 private:
     void readfile(const char *file, std::string &result) const;
+};
+
+class PackageLock
+{
+public:
+    PackageLock();
+    PackageLock(std::string path);
+
+    void read_lockfile(std::string path);
+    bool has_package(std::string name) const;
+    void add_package(std::string name, std::string version, std::string resolved, std::string integrity);
+
+    std::string resolved(std::string name) const;
+    std::string integrity(std::string name) const;
+
+    const PackageList &get_list() const;
+
+private:
+    PackageList _list;
 };
 
 #endif // PACKAGE_HPP

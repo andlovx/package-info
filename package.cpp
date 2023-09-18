@@ -13,8 +13,12 @@ Package::Package()
 }
 
 Package::Package(std::string name)
-    : _name(name),
-      _license_type(LicenseType::OTHER)
+    : _name(name), _license_type(LicenseType::OTHER)
+{
+}
+
+Package::Package(std::string name, std::string version, std::string url, std::string hash)
+    : _name(name), _version(version), _url(url), _hash(hash), _license_type(LicenseType::OTHER)
 {
 }
 
@@ -139,6 +143,7 @@ std::ostream &operator<<(std::ostream &out, const Package &p)
                << "version: \"" << p.version() << "\", "
                << "license: \"" << p.license() << "\", "
                << "url: \"" << p.url() << "\" "
+               << "hash: \"" << p.hash() << "\" "
                << "}";
 }
 
@@ -206,6 +211,23 @@ bool PackagePath::is_primary() const
     return count("node_modules") == 1;
 }
 
+std::string PackagePath::name() const
+{
+    std::string result;
+
+    for (auto it = rbegin(); it != rend(); ++it)
+    {
+        if (*it == "node_modules")
+        {
+            return result.substr(0, result.length() - 1);
+        }
+
+        result = *it + '/' + result;
+    }
+
+    return "";
+}
+
 std::string PackagePath::parent() const
 {
     for (auto it = begin(); it != end(); ++it)
@@ -217,6 +239,23 @@ std::string PackagePath::parent() const
     }
 
     return "";
+}
+
+std::string PackagePath::join(char separator) const
+{
+    return join(std::string() + separator);
+}
+
+std::string PackagePath::join(std::string separator) const
+{
+    std::string path;
+
+    for (auto it = begin(); it != end(); ++it)
+    {
+        path += *it + separator;
+    }
+
+    return path.substr(0, path.length() - separator.length());
 }
 
 Package PackageExplorer::discover(const std::string &path) const
@@ -279,4 +318,85 @@ void PackageExplorer::readfile(const char *file, std::string &result) const
     {
         result += line;
     }
+}
+
+PackageLock::PackageLock()
+{
+}
+
+PackageLock::PackageLock(std::string path)
+{
+    read_lockfile(path);
+}
+
+void PackageLock::read_lockfile(std::string path)
+{
+    std::ifstream input(path);
+    std::string result;
+
+    for (std::string line; std::getline(input, line);)
+    {
+        result += line;
+    }
+
+    auto data = json::parse(result);
+
+    if (data.contains("packages"))
+    {
+        auto packages = data["packages"];
+
+        for (auto it = packages.begin(); it != packages.end(); ++it)
+        {
+            PackagePath pp(it.key());
+
+            if (pp.size() == 0 ||
+                pp[0] == ".." ||         // Skip internal packages.
+                pp[0] != "node_modules") // Is this even possible?
+            {
+                continue;
+            }
+
+            auto value = it.value();
+
+            if (!value.contains("version"))
+            {
+                value["version"] = "";
+            }
+            if (!value.contains("resolved"))
+            {
+                value["resolved"] = "";
+            }
+            if (!value.contains("integrity"))
+            {
+                value["integrity"] = "";
+            }
+
+            add_package(pp.name(), value["version"], value["resolved"], value["integrity"]);
+        }
+    }
+}
+
+bool PackageLock::has_package(std::string name) const
+{
+    return _list.exists(name);
+}
+
+void PackageLock::add_package(std::string name, std::string version, std::string resolved, std::string integrity)
+{
+    _list.add(Package(name, version, resolved, integrity));
+}
+
+std::string PackageLock::resolved(std::string name) const
+{
+    return _list.find(name).url();
+}
+
+std::string PackageLock::integrity(std::string name) const
+{
+    return _list.find(name).hash();
+}
+
+const PackageList &PackageLock::get_list() const
+{
+    return _list;
 }

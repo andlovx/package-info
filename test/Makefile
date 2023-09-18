@@ -14,6 +14,7 @@ PROGRAMS += \
 	package-json1 \
 	package-json2 \
 	package-path \
+	package-lock \
 	collector \
 	format
 
@@ -33,6 +34,7 @@ explore-exclude : explore-exclude.o ../explorer.o
 package-json1 : package-json1.o 
 package-json2 : package-json2.o 
 package-path : package-path.o ../package.o 
+package-lock : package-lock.o ../package.o ../explorer.o
 collector : collector.o ../collector.o ../explorer.o ../package.o
 format : format.o ../format.o ../package.o
 
