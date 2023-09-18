@@ -22,7 +22,8 @@ enum HashType
     SHA256,
     SHA384,
     SHA512,
-    UNSPEC
+    MISSING,
+    UNKNOWN
 };
 
 class Package
@@ -154,6 +155,7 @@ public:
 
     std::string resolved(std::string name) const;
     std::string integrity(std::string name) const;
+    HashType hash_type(std::string name) const;
 
     const PackageList &get_list() const;
 

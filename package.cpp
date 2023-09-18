@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <regex>
 #include <nlohmann/json.hpp>
 #include "package.hpp"
 
@@ -394,6 +395,51 @@ std::string PackageLock::resolved(std::string name) const
 std::string PackageLock::integrity(std::string name) const
 {
     return _list.find(name).hash();
+}
+
+HashType PackageLock::hash_type(std::string name) const
+{
+    std::string str = integrity(name);
+    std::regex pattern("(etag|md5|sha1|sha224|sha256|sha384|sha512).*");
+    std::smatch matches;
+
+    if (str.length() == 0 || !std::regex_match(str, matches, pattern))
+    {
+        return HashType::MISSING;
+    }
+
+    if (matches[1] == "etag")
+    {
+        return HashType::ETAG;
+    }
+    else if (matches[1] == "md5")
+    {
+        return HashType::MD5;
+    }
+    else if (matches[1] == "sha1")
+    {
+        return HashType::SHA1;
+    }
+    else if (matches[1] == "sha224")
+    {
+        return HashType::SHA224;
+    }
+    else if (matches[1] == "sha256")
+    {
+        return HashType::SHA256;
+    }
+    else if (matches[1] == "sha384")
+    {
+        return HashType::SHA384;
+    }
+    else if (matches[1] == "sha512")
+    {
+        return HashType::SHA512;
+    }
+    else
+    {
+        return HashType::UNKNOWN;
+    }
 }
 
 const PackageList &PackageLock::get_list() const

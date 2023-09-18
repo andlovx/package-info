@@ -13,11 +13,19 @@ void Collector::process(std::string root)
 {
     DirectoryExplorer explorer(root);
     DirectoryExplorer::file_list list;
+    DirectoryExplorer::file_list lock;
     Package package;
+    PackageLock lockfile;
 
     explorer.set_filter(DirectoryExplorer::FILES);
     explorer.set_exclude({".git", ".svn"});
     explorer.set_files(list, "package.json");
+    explorer.set_files(lock, "package-lock.json");
+
+    for (auto file : lock)
+    {
+        lockfile.read_lockfile(file);
+    }
 
     for (auto file : list)
     {
@@ -30,11 +38,18 @@ void Collector::process(std::string root)
         {
             package = _explorer.discover(file);
 
-            if (!package.name().empty() &&
-                !package.version().empty())
+            if (package.name().empty() ||
+                package.version().empty())
             {
-                _packages.add(package);
+                continue;
             }
+            if (lockfile.has_package(package.name()))
+            {
+                package.hash(lockfile.integrity(package.name()));
+                package.hash(lockfile.hash_type(package.name()));
+            }
+
+            _packages.add(package);
         }
         catch (const std::exception &exception)
         {
