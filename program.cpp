@@ -1,7 +1,9 @@
 #include <iostream>
+#include <fstream>
 #include <libgen.h>
 #include "program.hpp"
 #include "collector.hpp"
+#include "format.hpp"
 
 Options::Options()
 {
@@ -175,10 +177,19 @@ void Program::run()
     collector.set_debug(_options.runtime.debug);
     collector.process(_options.generic.root);
 
-    for (auto entry : collector.get_packages())
+    auto formatter = Formatter::create(_options.generic.format);
+
+    if (_options.generic.output.empty())
     {
-        std::cout << entry.first << ": " << entry.second << std::endl;
+        formatter->output(std::cout, collector.get_packages());
     }
+    else
+    {
+        std::ofstream stream(_options.generic.output);
+        formatter->output(stream, collector.get_packages());
+    }
+
+    delete formatter;
 }
 
 std::string Program::name() const
