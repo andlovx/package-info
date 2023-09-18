@@ -11,10 +11,15 @@ Options::Options()
     generic.format = "json";
     generic.hash = "md5";
 
-    output.name = true;
-    output.version = true;
-    output.modified = false;
+    output.name = false;
+    output.version = false;
+    output.license = false;
     output.project = false;
+    output.download = false;
+    output.hash = false;
+    output.modified = false;
+    output.primary = false;
+    output.parent = false;
 
     runtime.debug = false;
     runtime.verbose = false;
@@ -111,6 +116,10 @@ void Program::parse(int argc, char **argv)
         {
             _options.output.version = true;
         }
+        else if (option.key == "--license")
+        {
+            _options.output.license = true;
+        }
         else if (option.key == "--modified")
         {
             _options.output.modified = true;
@@ -118,6 +127,41 @@ void Program::parse(int argc, char **argv)
         else if (option.key == "--project")
         {
             _options.output.project = true;
+        }
+        else if (option.key == "--download")
+        {
+            _options.output.download = true;
+        }
+        else if (option.key == "--hash")
+        {
+            _options.output.hash = true;
+        }
+        else if (option.key == "--primary")
+        {
+            _options.output.primary = true;
+        }
+        else if (option.key == "--parent")
+        {
+            _options.output.parent = true;
+        }
+        else if (option.key == "--standard")
+        {
+            _options.output.name = true;
+            _options.output.version = true;
+            _options.output.license = true;
+            _options.output.hash = true;
+        }
+        else if (option.key == "--all")
+        {
+            _options.output.name = true;
+            _options.output.version = true;
+            _options.output.license = true;
+            _options.output.hash = true;
+            _options.output.project = true;
+            _options.output.download = true;
+            _options.output.modified = true;
+            _options.output.parent = true;
+            _options.output.primary = true;
         }
         //
         // Option aliases:
@@ -178,6 +222,7 @@ void Program::run()
     collector.process(_options.generic.root);
 
     auto formatter = Formatter::create(_options.generic.format);
+    formatter->set_filter(_options.output);
 
     if (_options.generic.output.empty())
     {
@@ -227,16 +272,28 @@ void Program::usage()
         << "Include:\n"
         << "  --name:         Include package name in output.\n"
         << "  --version:      Include package version in output.\n"
+        << "  --license:      Include license type in output.\n"
         << "  --modified:     Include modified date in output.\n"
-        << "  --project:          Include distribution URL in output.\n"
+        << "  --project:      Include homepage/repository URL in output.\n"
+        << "  --download:     Include download URL in output.\n"
+        << "  --hash:         Include package hash in output.\n"
+        << "  --primary:      Include primary flag in output.\n"
+        << "  --parent:       Include parent package name in output.\n"
+        << "  --standard:     Enable include of standard output.\n"
+        << "  --all:          Enable include of all output.\n"
         << "\n"
         << "Aliases:\n"
         << "  --json:         Alias for format=json\n"
+        << "  --xml:          Alias for format=xml\n"
+        << "  --csv:          Alias for format=csv\n"
+        << "  --tab:          Alias for format=tab\n"
+        << "  --md5:          Alias for hash=md5\n"
         << "  --sha1:         Alias for hash=sha1\n"
         << "  --sha224:       Alias for hash=sha224\n"
         << "  --sha256:       Alias for hash=sha256\n"
         << "  --sha384:       Alias for hash=sha384\n"
         << "  --sha512:       Alias for hash=sha512\n"
+        << "  --etag:         Alias for hash=etag\n"
         << "\n"
         << "Copyright (C) 2023 Xertified AB. "
         << "Released under GNU GPL version 3 license.\n";
@@ -253,8 +310,13 @@ std::ostream &operator<<(std::ostream &out, const Options &options)
            << "Output:\n"
            << "      Name: " << options.output.name << "\n"
            << "   Version: " << options.output.version << "\n"
+           << "   License: " << options.output.license << "\n"
            << "  Modified: " << options.output.modified << "\n"
-           << "       URL: " << options.output.project << "\n"
+           << "   Project: " << options.output.project << "\n"
+           << "  Download: " << options.output.download << "\n"
+           << "      Hash: " << options.output.hash << "\n"
+           << "   Primary: " << options.output.primary << "\n"
+           << "    Parent: " << options.output.parent << "\n"
            << "Runtime:\n"
            << "     Debug: " << options.runtime.debug << "\n"
            << "   Verbose: " << options.runtime.verbose << "\n";

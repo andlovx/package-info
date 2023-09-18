@@ -3,16 +3,27 @@
 
 #include <iostream>
 #include "package.hpp"
+#include "program.hpp"
+
+using FormatFilter = Options::Output;
 
 class Formatter
 {
 public:
+    Formatter();
+    Formatter(const FormatFilter &filter);
+
     virtual ~Formatter() {}
 
     virtual void output(std::ostream &out, const PackageList &list) const = 0;
     virtual void output(std::ostream &out, const Package &package) const = 0;
 
-    static const Formatter *create(std::string type);
+    virtual void set_filter(const FormatFilter &filter);
+
+    static Formatter *create(std::string type);
+
+protected:
+    FormatFilter _filter;
 };
 
 class JsonFormat : public Formatter

@@ -27,8 +27,13 @@ struct Options
     {
         bool name;
         bool version;
+        bool license;
         bool modified;
         bool project;
+        bool download;
+        bool hash;
+        bool primary;
+        bool parent;
     } output;
 
     struct Runtime

@@ -9,17 +9,17 @@
 using json = nlohmann::json;
 
 Package::Package()
-    : _license_type(LicenseType::OTHER)
+    : _license_type(LicenseType::OTHER), _primary(true)
 {
 }
 
 Package::Package(std::string name)
-    : _name(name), _license_type(LicenseType::OTHER)
+    : _name(name), _license_type(LicenseType::OTHER), _primary(true)
 {
 }
 
 Package::Package(std::string name, std::string version, std::string download, std::string hash)
-    : _name(name), _version(version), _download(download), _hash(hash), _license_type(LicenseType::OTHER)
+    : _name(name), _version(version), _download(download), _hash(hash), _license_type(LicenseType::OTHER), _primary(true)
 {
 }
 
@@ -309,6 +309,7 @@ Package PackageExplorer::discover(const std::string &path) const
     if (!pp.is_primary())
     {
         package.parent(pp.parent());
+        package.primary(false);
     }
 
     if (data.contains("homepage") && data["homepage"].is_string())
