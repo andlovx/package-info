@@ -1,6 +1,3 @@
-CC = g++
-CPPFLAGS = -O -Wall -g -std=c++17 $(INCLUDES)
-INCLUDES = -I..
 PROGRAMS += \
 	package-object \
 	package-list \
@@ -22,21 +19,21 @@ PROGRAMS += \
 
 all : $(PROGRAMS)
 
-package-object : package-object.o ../package.o
-package-list : package-list.o ../package.o
-explore-filter : explore-filter.o ../explorer.o
-explore-all : explore-all.o ../explorer.o
-explore-name : explore-name.o ../explorer.o
-explore-regex : explore-regex.o ../explorer.o
-explore-func : explore-func.o ../explorer.o
-explore-files : explore-files.o ../explorer.o
-explore-exclude : explore-exclude.o ../explorer.o
+package-object : package-object.o ../source/package.o
+package-list : package-list.o ../source/package.o
+explore-filter : explore-filter.o ../source/explorer.o
+explore-all : explore-all.o ../source/explorer.o
+explore-name : explore-name.o ../source/explorer.o
+explore-regex : explore-regex.o ../source/explorer.o
+explore-func : explore-func.o ../source/explorer.o
+explore-files : explore-files.o ../source/explorer.o
+explore-exclude : explore-exclude.o ../source/explorer.o
 package-json1 : package-json1.o 
 package-json2 : package-json2.o 
-package-path : package-path.o ../package.o 
-package-lock : package-lock.o ../package.o ../explorer.o
-collector : collector.o ../collector.o ../explorer.o ../package.o
-format : format.o ../format.o ../package.o
+package-path : package-path.o ../source/package.o 
+package-lock : package-lock.o ../source/package.o ../source/explorer.o
+collector : collector.o ../source/collector.o ../source/explorer.o ../source/package.o
+format : format.o ../source/format.o ../source/package.o
 
 clean :
 	rm -f *.o

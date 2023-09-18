@@ -1,15 +1,23 @@
 # NPM package info
 
-Scan directory for package-lock.json files and collects information about used packages (including version and license).
+Scan directory for package.json and package-lock.json files and collects information about used packages (including version and license).
 
 ## Requirements
 
-This program depends on having the "npm" command globally installed. C++ compiler with build tools needs to be installed too.
+This program depends on "npm install" being runned in the directory to be scanned. C++ compiler with build tools needs to be installed too.
 
 ## Compile
 
+Run make or compile directly from the command line.
+
 ```bash
-g++ -o package-info -Wall -O2 *.cpp
+make
+```
+
+Edit makefile or pass environment variables for building test drivers with debug information.
+
+```bash
+make -e WITH_DEBUG=1 WITH_TEST=0
 ```
 
 ## Execute

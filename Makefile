@@ -1,30 +1,28 @@
-CC = g++
-CPPFLAGS = -O2 -Wall -std=c++17
-WITH_TEST = 1
+export CC = g++
+export CPPFLAGS = -Wall -std=c++17 $(INCLUDES)
 
-PROGRAMS = package-info
-SUBDIRS  = 
+INCLUDES = -I../source
+
+WITH_DEBUG = 0
+WITH_TEST  = 0
+SUBDIRS    = source
 
 ifeq ($(WITH_TEST), 1)
 	SUBDIRS += test
 endif
 
+ifeq ($(WITH_DEBUG), 1)
+	CPPFLAGS += -O -g
+else
+	CPPFLAGS += -O2
+endif
+
 .PHONY : all clean all-clean distclean $(SUBDIRS)
 
-all : $(PROGRAMS) $(SUBDIRS)
-package-info : main.o package.o explorer.o program.o collector.o format.o
-	$(CC) -o $@ $+
+all : $(SUBDIRS)
+clean : $(SUBDIRS)
+distclean : clean $(SUBDIRS)
+all-clean : distclean
 
 $(SUBDIRS):
 	make -C $@ $(MAKECMDGOALS)
-
-clean : $(SUBDIRS)
-	rm -f *.o
-all-clean : clean
-	rm -f *~
-	rm -f $(PROGRAMS)
-distclean : all-clean
-
-%.o : %.cpp
-	$(CC) -c $(CPPFLAGS) $< -o $@
-%.cpp : %.hpp
