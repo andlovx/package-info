@@ -403,7 +403,7 @@ void PackageLock::add_package(std::string name, std::string version, std::string
 
 std::string PackageLock::resolved(std::string name) const
 {
-    return _list.find(name).project();
+    return _list.find(name).download();
 }
 
 std::string PackageLock::integrity(std::string name) const
